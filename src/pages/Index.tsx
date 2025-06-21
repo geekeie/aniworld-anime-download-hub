@@ -1,8 +1,9 @@
 
-import { Download, Play, Shield, Smartphone, Globe, Star, Zap, Heart } from "lucide-react";
+import { Download, Play, Shield, Smartphone, Globe, Star, Zap, Heart, Mail, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const features = [
@@ -45,6 +46,29 @@ const Index = () => {
     { number: "4.8★", label: "User Rating" }
   ];
 
+  const animeImages = [
+    {
+      title: "Attack on Titan",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop",
+      genre: "Action"
+    },
+    {
+      title: "Your Name",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop",
+      genre: "Romance"
+    },
+    {
+      title: "Death Note",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop",
+      genre: "Thriller"
+    },
+    {
+      title: "One Piece",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop",
+      genre: "Adventure"
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Header */}
@@ -56,14 +80,18 @@ const Index = () => {
             </div>
             <span className="text-2xl font-bold text-white">AniWorld</span>
           </div>
-          <Button className="bg-anime-gradient hover:opacity-90 text-white font-semibold px-6 py-2 rounded-full transition-all duration-300 hover:scale-105">
-            <Download className="w-4 h-4 mr-2" />
-            Download APK
-          </Button>
+          <nav className="hidden md:flex items-center space-x-6">
+            <Link to="/" className="text-white hover:text-purple-300 transition-colors">Home</Link>
+            <Link to="/privacy" className="text-white hover:text-purple-300 transition-colors">Privacy</Link>
+            <Button className="bg-anime-gradient hover:opacity-90 text-white font-semibold px-6 py-2 rounded-full transition-all duration-300 hover:scale-105">
+              <Download className="w-4 h-4 mr-2" />
+              Download APK
+            </Button>
+          </nav>
         </div>
       </header>
 
-      {/* Hero Section */}
+      {/* Enhanced Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-anime-gradient opacity-10"></div>
         <div className="container mx-auto px-4 text-center relative z-10">
@@ -92,11 +120,15 @@ const Index = () => {
             ))}
           </div>
 
-          {/* CTA Buttons */}
+          {/* Enhanced CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Button size="lg" className="bg-anime-gradient hover:opacity-90 text-white font-bold px-8 py-4 rounded-full text-lg transition-all duration-300 hover:scale-105 shadow-2xl">
               <Download className="w-6 h-6 mr-3" />
               Download AniWorld APK
+            </Button>
+            <Button size="lg" className="bg-white/10 border border-white/30 text-white hover:bg-white/20 px-8 py-4 rounded-full text-lg transition-all duration-300 hover:scale-105">
+              <Mail className="w-6 h-6 mr-3" />
+              Contact Us
             </Button>
             <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 px-8 py-4 rounded-full text-lg transition-all duration-300 hover:scale-105">
               <Play className="w-6 h-6 mr-3" />
@@ -107,6 +139,38 @@ const Index = () => {
           <p className="text-gray-400 text-sm">
             ✅ No Registration Required • ✅ No Monthly Fees • ✅ 100% Free Forever
           </p>
+        </div>
+      </section>
+
+      {/* Images Gallery Section */}
+      <section className="py-20 bg-black/20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Popular <span className="bg-anime-gradient bg-clip-text text-transparent">Anime Series</span>
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Discover thousands of anime episodes from your favorite series
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {animeImages.map((anime, index) => (
+              <Card key={index} className="bg-white/5 border-white/10 backdrop-blur-md hover:bg-white/10 transition-all duration-300 hover:scale-105 animate-fade-in overflow-hidden" style={{animationDelay: `${index * 0.1}s`}}>
+                <div className="aspect-[3/4] overflow-hidden">
+                  <img 
+                    src={anime.image} 
+                    alt={anime.title}
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                  />
+                </div>
+                <CardContent className="p-4">
+                  <h3 className="text-lg font-bold text-white mb-2">{anime.title}</h3>
+                  <Badge className="bg-anime-gradient text-white text-xs">{anime.genre}</Badge>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -138,68 +202,112 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Article Content */}
+      {/* Full Article Content */}
       <section className="py-20 bg-white/5">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <div className="prose prose-lg prose-invert max-w-none">
-              <h2 className="text-3xl font-bold text-white mb-8">AniWorld App: Your Gateway to Unlimited Anime</h2>
-              
-              <div className="bg-white/10 rounded-2xl p-8 mb-8 border border-white/20">
-                <p className="text-gray-200 text-lg leading-relaxed mb-0">
-                  AniWorld App is the ultimate free anime streaming solution for Android users. If you're struggling to find a reliable place to watch your favorite anime shows, this app solves that problem instantly.
+            <article className="prose prose-lg prose-invert max-w-none">
+              <header className="mb-12 text-center">
+                <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                  AniWorld App: Download Free APK for Android & Watch Animes
+                </h1>
+                <p className="text-xl text-gray-300 leading-relaxed">
+                  The ultimate free anime streaming solution for Android users
+                </p>
+              </header>
+
+              <div className="space-y-8">
+                <div className="bg-white/10 rounded-2xl p-8 border border-white/20">
+                  <p className="text-gray-200 text-lg leading-relaxed">
+                    AniWorld App is the ultimate free anime streaming solution for Android users. If you're struggling to find a reliable place to watch your favorite anime shows, this app solves that problem instantly.
+                  </p>
+                </div>
+
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  Tired of paying monthly fees for anime streaming? Fed up with apps that crash or have limited content? The AniWorld application gives you access to thousands of anime episodes without spending a single penny.
+                </p>
+
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  We are the official team behind aniworld.de. We created this anime app specifically for fans who want quality streaming on their phones. No hidden costs. No annoying ads. Just pure anime entertainment.
+                </p>
+
+                <h2 className="text-3xl font-bold text-white mb-6">What Makes AniWorld App Special</h2>
+                
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  The AniWorld anime app stands out from other streaming apps in several ways. First, it's completely free to use. You don't need to create an account or provide credit card details.
+                </p>
+
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  Second, our anime streaming app contains every type of anime content you can imagine. Action-packed series like Attack on Titan, romantic comedies like Kaguya-sama, horror anime like Tokyo Ghoul, and slice-of-life shows like Your Name. From classic series to brand new seasonal releases, everything is available in one place.
+                </p>
+
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  Third, the app includes content for all age groups. Kids can enjoy Pokemon and Doraemon. Teenagers love Naruto and One Piece. Adults can watch mature content like Death Note and Cowboy Bebop.
+                </p>
+
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  The interface is clean and simple. Our official website aniworld.de was designed specifically for German users, but the app serves both English and German speaking audiences. Finding your next anime to watch takes just a few taps.
+                </p>
+
+                <h2 className="text-3xl font-bold text-white mb-6">Key Features of AniWorld Android App</h2>
+
+                <h3 className="text-2xl font-bold text-white mb-4">Comprehensive Anime Content Library</h3>
+                
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  Our free anime app hosts every type of anime series you can think of. Popular shounen anime like Dragon Ball Z, One Piece, and Bleach. Romantic anime series including Your Name, A Silent Voice, and Toradora. Horror and thriller anime like Another and Parasyte. Comedy series such as Gintama and KonoSuba.
+                </p>
+
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  We also feature different anime formats. Full TV series with 12-24 episodes per season. Long-running shows with hundreds of episodes. Anime movies from Studio Ghibli and other famous studios. OVAs and special episodes that are hard to find elsewhere.
+                </p>
+
+                <h3 className="text-2xl font-bold text-white mb-4">Multiple Video Quality Options</h3>
+                
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  Watch anime in the quality that suits your device and internet speed. Our app offers 360p for basic viewing on slower connections. 720p HD for crisp, clear picture quality. 1080p Full HD for the ultimate viewing experience on larger screens.
+                </p>
+
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  The app automatically detects your internet speed and suggests the best quality. You can also manually select your preferred resolution for each episode.
+                </p>
+
+                <h3 className="text-2xl font-bold text-white mb-4">Advanced Pro Player Features</h3>
+                
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  The built-in video player comes with professional-grade features. Skip opening and ending themes with one tap. Adjust playback speed from 0.5x to 2x for your preference. Enable subtitle timing adjustment if sync issues occur.
+                </p>
+
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  The player supports gesture controls. Swipe left or right to skip 10 seconds. Swipe up or down to adjust volume and brightness. Double-tap to pause or play. These features make watching anime more comfortable and convenient.
+                </p>
+
+                <h3 className="text-2xl font-bold text-white mb-4">Download Episodes for Offline Viewing</h3>
+                
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  Going somewhere without internet? Download up to 50 episodes directly to your phone. Perfect for flights, trips, or areas with poor network coverage.
+                </p>
+
+                <h3 className="text-2xl font-bold text-white mb-4">Language Support for Global Audience</h3>
+                
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  The anime app supports both English and German content primarily. Since our official website aniworld.de serves the German market, we understand what German anime fans want. However, the app interface works perfectly in English too.
+                </p>
+
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  Subtitles are available in multiple languages including English, German, Spanish, French, Italian, and Portuguese. You can choose between original Japanese audio with subtitles or dubbed versions in English and German where available.
+                </p>
+
+                <h3 className="text-2xl font-bold text-white mb-4">Optimized for All Android Devices</h3>
+                
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  Whether you have a Samsung Galaxy, Xiaomi Redmi, OnePlus, Google Pixel, or any other Android phone, the app runs smoothly. It's specially optimized for devices with 2GB RAM or more, but works fine on older phones too.
+                </p>
+
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  The app adapts to your screen size automatically. Small phone screens get a compact layout. Tablet users enjoy a wider interface with more content visible at once.
                 </p>
               </div>
-
-              <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                Tired of paying monthly fees for anime streaming? Fed up with apps that crash or have limited content? The AniWorld application gives you access to thousands of anime episodes without spending a single penny.
-              </p>
-
-              <p className="text-gray-300 text-lg leading-relaxed mb-8">
-                We are the official team behind aniworld.de. We created this anime app specifically for fans who want quality streaming on their phones. No hidden costs. No annoying ads. Just pure anime entertainment.
-              </p>
-
-              <h3 className="text-2xl font-bold text-white mb-6">Comprehensive Anime Content Library</h3>
-              <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                Our free anime app hosts every type of anime series you can think of. Popular shounen anime like Dragon Ball Z, One Piece, and Bleach. Romantic anime series including Your Name, A Silent Voice, and Toradora. Horror and thriller anime like Another and Parasyte. Comedy series such as Gintama and KonoSuba.
-              </p>
-
-              <p className="text-gray-300 text-lg leading-relaxed mb-8">
-                We also feature different anime formats. Full TV series with 12-24 episodes per season. Long-running shows with hundreds of episodes. Anime movies from Studio Ghibli and other famous studios. OVAs and special episodes that are hard to find elsewhere.
-              </p>
-
-              <h3 className="text-2xl font-bold text-white mb-6">Multiple Video Quality Options</h3>
-              <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                Watch anime in the quality that suits your device and internet speed. Our app offers 360p for basic viewing on slower connections. 720p HD for crisp, clear picture quality. 1080p Full HD for the ultimate viewing experience on larger screens.
-              </p>
-
-              <p className="text-gray-300 text-lg leading-relaxed mb-8">
-                The app automatically detects your internet speed and suggests the best quality. You can also manually select your preferred resolution for each episode.
-              </p>
-
-              <h3 className="text-2xl font-bold text-white mb-6">Advanced Pro Player Features</h3>
-              <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                The built-in video player comes with professional-grade features. Skip opening and ending themes with one tap. Adjust playback speed from 0.5x to 2x for your preference. Enable subtitle timing adjustment if sync issues occur.
-              </p>
-
-              <p className="text-gray-300 text-lg leading-relaxed mb-8">
-                The player supports gesture controls. Swipe left or right to skip 10 seconds. Swipe up or down to adjust volume and brightness. Double-tap to pause or play. These features make watching anime more comfortable and convenient.
-              </p>
-
-              <h3 className="text-2xl font-bold text-white mb-6">Download Episodes for Offline Viewing</h3>
-              <p className="text-gray-300 text-lg leading-relaxed mb-8">
-                Going somewhere without internet? Download up to 50 episodes directly to your phone. Perfect for flights, trips, or areas with poor network coverage.
-              </p>
-
-              <h3 className="text-2xl font-bold text-white mb-6">Language Support for Global Audience</h3>
-              <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                The anime app supports both English and German content primarily. Since our official website aniworld.de serves the German market, we understand what German anime fans want. However, the app interface works perfectly in English too.
-              </p>
-
-              <p className="text-gray-300 text-lg leading-relaxed mb-8">
-                Subtitles are available in multiple languages including English, German, Spanish, French, Italian, and Portuguese. You can choose between original Japanese audio with subtitles or dubbed versions in English and German where available.
-              </p>
-            </div>
+            </article>
           </div>
         </div>
       </section>
@@ -330,10 +438,16 @@ const Index = () => {
             Join millions of anime fans who already enjoy unlimited streaming on their phones. 
             Your favorite anime adventures are just one download away.
           </p>
-          <Button size="lg" className="bg-white text-purple-600 hover:bg-gray-100 font-bold px-12 py-6 rounded-full text-xl transition-all duration-300 hover:scale-105 shadow-2xl">
-            <Download className="w-8 h-8 mr-4" />
-            Get AniWorld APK Free
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button size="lg" className="bg-white text-purple-600 hover:bg-gray-100 font-bold px-12 py-6 rounded-full text-xl transition-all duration-300 hover:scale-105 shadow-2xl">
+              <Download className="w-8 h-8 mr-4" />
+              Get AniWorld APK Free
+            </Button>
+            <Button size="lg" className="bg-white/20 border border-white/30 text-white hover:bg-white/30 font-bold px-12 py-6 rounded-full text-xl transition-all duration-300 hover:scale-105">
+              <Mail className="w-8 h-8 mr-4" />
+              Contact Support
+            </Button>
+          </div>
           <p className="text-white/80 text-sm mt-6">
             Remember to download only from our official website at aniworld.de
           </p>
@@ -349,6 +463,10 @@ const Index = () => {
                 <Play className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white">AniWorld</span>
+            </div>
+            <div className="flex items-center space-x-6 mb-4 md:mb-0">
+              <Link to="/privacy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link>
+              <a href="mailto:contact@aniworld.de" className="text-gray-400 hover:text-white transition-colors">Contact</a>
             </div>
             <div className="text-gray-400 text-sm text-center md:text-right">
               <p>© 2024 AniWorld. Official app from aniworld.de</p>
