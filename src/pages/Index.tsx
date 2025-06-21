@@ -1,11 +1,14 @@
 
-import { Download, Play, Shield, Smartphone, Globe, Star, Zap, Heart, Mail, Image } from "lucide-react";
+import { Download, Play, Shield, Smartphone, Globe, Star, Zap, Heart, Mail, Image, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 const Index = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const features = [
     {
       icon: <Play className="w-8 h-8" />,
@@ -80,6 +83,8 @@ const Index = () => {
             </div>
             <span className="text-2xl font-bold text-white">AniWorld</span>
           </div>
+          
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
             <Link to="/" className="text-white hover:text-purple-300 transition-colors">Home</Link>
             <Link to="/privacy" className="text-white hover:text-purple-300 transition-colors">Privacy</Link>
@@ -88,7 +93,41 @@ const Index = () => {
               Download APK
             </Button>
           </nav>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden text-white p-2"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
+
+        {/* Mobile Navigation */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden bg-black/30 backdrop-blur-md border-t border-white/10">
+            <nav className="flex flex-col space-y-4 px-4 py-6">
+              <Link 
+                to="/" 
+                className="text-white hover:text-purple-300 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Home
+              </Link>
+              <Link 
+                to="/privacy" 
+                className="text-white hover:text-purple-300 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Privacy Policy
+              </Link>
+              <Button className="bg-anime-gradient hover:opacity-90 text-white font-semibold px-6 py-2 rounded-full transition-all duration-300 hover:scale-105 w-full">
+                <Download className="w-4 h-4 mr-2" />
+                Download APK
+              </Button>
+            </nav>
+          </div>
+        )}
       </header>
 
       {/* Enhanced Hero Section */}
@@ -98,12 +137,11 @@ const Index = () => {
           <Badge className="mb-6 bg-white/20 text-white border-white/30 animate-bounce-slow">
             Official from aniworld.de
           </Badge>
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 animate-fade-in">
-            Download Free
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 animate-fade-in leading-tight">
+            AniWorld App: Download Free
             <span className="bg-anime-gradient bg-clip-text text-transparent block">
-              Anime Streaming
+              APK for Android & Watch Animes
             </span>
-            App for Android
           </h1>
           <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto animate-slide-in-left">
             Watch thousands of anime episodes without subscription fees. From Attack on Titan to Your Name, 
@@ -129,10 +167,6 @@ const Index = () => {
             <Button size="lg" className="bg-white/10 border border-white/30 text-white hover:bg-white/20 px-8 py-4 rounded-full text-lg transition-all duration-300 hover:scale-105">
               <Mail className="w-6 h-6 mr-3" />
               Contact Us
-            </Button>
-            <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 px-8 py-4 rounded-full text-lg transition-all duration-300 hover:scale-105">
-              <Play className="w-6 h-6 mr-3" />
-              Watch Preview
             </Button>
           </div>
 
