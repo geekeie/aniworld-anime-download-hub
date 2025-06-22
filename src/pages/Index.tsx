@@ -180,7 +180,16 @@ const Index = () => {
               />
             ) : (
               <div className="text-white space-y-6">
-                <p>Die AniWorld App ist die ultimative kostenlose Anime-Streaming-Lösung für Android-Nutzer...</p>
+                <h2 className="text-3xl font-bold mb-6">AniWorld App: Kostenlose APK für Android herunterladen & Animes schauen</h2>
+                <p>Die AniWorld App ist die ultimative kostenlose Anime-Streaming-Lösung für Android-Nutzer. Wenn du Schwierigkeiten hast, einen zuverlässigen Ort zum Ansehen deiner Lieblings-Anime-Serien zu finden, löst diese App das Problem sofort.</p>
+                <p>Hast du genug von monatlichen Abogebühren für Anime-Streaming? Genug von Apps, die abstürzen oder nur begrenzte Inhalte bieten? Die AniWorld-App gibt dir Zugang zu tausenden Anime-Episoden – ganz ohne einen Cent auszugeben.</p>
+                <p>Wir sind das offizielle Team hinter aniworld.de. Wir haben diese Anime-App speziell für Fans entwickelt, die qualitativ hochwertiges Streaming auf ihrem Handy genießen wollen. Keine versteckten Kosten. Keine nervige Werbung. Einfach pures Anime-Vergnügen.</p>
+                
+                <h3 className="text-2xl font-bold mt-8 mb-4">Was macht die AniWorld App besonders?</h3>
+                <p>Die AniWorld Anime App hebt sich in vielerlei Hinsicht von anderen Streaming-Apps ab. Erstens ist sie komplett kostenlos nutzbar. Du musst kein Konto erstellen und keine Kreditkartendaten angeben.</p>
+                <p>Zweitens enthält unsere Anime-Streaming-App jede Art von Anime-Inhalten, die du dir vorstellen kannst. Actionreiche Serien wie Attack on Titan, romantische Komödien wie Kaguya-sama, Horror-Anime wie Tokyo Ghoul und Slice-of-Life-Shows wie Your Name. Von klassischen Serien bis hin zu brandneuen Veröffentlichungen – alles an einem Ort.</p>
+                <p>Drittens bietet die App Inhalte für alle Altersgruppen. Kinder genießen Pokemon und Doraemon. Teenager lieben Naruto und One Piece. Erwachsene können sich an reiferen Serien wie Death Note und Cowboy Bebop erfreuen.</p>
+                <p>Die Benutzeroberfläche ist sauber und einfach. Unsere offizielle Website aniworld.de wurde speziell für deutsche Nutzer entworfen, aber die App unterstützt sowohl Deutsch als auch Englisch. Dein nächster Anime ist nur wenige Taps entfernt.</p>
               </div>
             )}
             
