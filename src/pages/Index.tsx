@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Download, Play, Star, Users, Globe, Shield, Smartphone, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
