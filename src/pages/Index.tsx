@@ -1,16 +1,31 @@
-
 import { Download, Play, Shield, Smartphone, Globe, Star, Zap, Heart, Mail, Image, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { LanguageToggle } from "@/components/LanguageToggle";
 
 const Index = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t, language } = useLanguage();
+  const [content, setContent] = useState<any>(null);
+  const [images, setImages] = useState<any>(null);
+
+  // Load content and images from localStorage
+  useEffect(() => {
+    const savedContent = localStorage.getItem('aniworld-content');
+    const savedImages = localStorage.getItem('aniworld-images');
+    
+    if (savedContent) {
+      setContent(JSON.parse(savedContent));
+    }
+    
+    if (savedImages) {
+      setImages(JSON.parse(savedImages));
+    }
+  }, []);
 
   const features = [
     {
@@ -112,7 +127,7 @@ const Index = () => {
           <div className="flex items-center space-x-2">
             <div className="w-10 h-10 bg-anime-gradient rounded-xl flex items-center justify-center">
               <img 
-                src="/logo-placeholder.png" 
+                src={images?.logo || "/logo-placeholder.png"} 
                 alt="AniWorld Logo" 
                 className="w-8 h-8 object-contain"
                 onError={(e) => {
@@ -125,7 +140,7 @@ const Index = () => {
             <span className="text-2xl font-bold text-white">AniWorld</span>
           </div>
           
-          {/* Desktop Navigation - Removed Download Button */}
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
             <Link to="/" className="text-white hover:text-purple-300 transition-colors">{t('nav.home')}</Link>
             <Link to="/privacy" className="text-white hover:text-purple-300 transition-colors">{t('nav.privacy')}</Link>
@@ -181,16 +196,16 @@ const Index = () => {
             {t('hero.badge')}
           </Badge>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 animate-fade-in leading-tight">
-            {t('hero.title')}
+            {content?.heroTitle || t('hero.title')}
           </h1>
           <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto animate-slide-in-left">
-            {t('hero.description')}
+            {content?.heroDescription || t('hero.description')}
           </p>
           
           {/* Hero Section Logo */}
           <div className="mb-8">
             <img 
-              src="/hero-logo-placeholder.png" 
+              src={images?.heroLogo || "/hero-logo-placeholder.png"} 
               alt="AniWorld App Preview" 
               className="mx-auto w-64 h-64 object-contain"
               onError={(e) => {
@@ -244,21 +259,21 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {animeImages.map((anime, index) => (
+            {[1, 2, 3, 4].map((num, index) => (
               <Card key={index} className="bg-white/5 border-white/10 backdrop-blur-md hover:bg-white/10 transition-all duration-300 hover:scale-105 animate-fade-in overflow-hidden" style={{animationDelay: `${index * 0.1}s`}}>
                 <div className="aspect-[3/4] overflow-hidden bg-gray-700 flex items-center justify-center">
                   <img 
-                    src={anime.image} 
-                    alt={anime.title}
+                    src={images?.[`anime${num}`] || `/placeholder-anime-${num}.jpg`} 
+                    alt={t(`anime.title_${num}`) || `Anime ${num}`}
                     className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                     onError={(e) => {
-                      e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='600' viewBox='0 0 400 600'%3E%3Crect width='400' height='600' fill='%23374151'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='20' fill='white' text-anchor='middle' dy='.3em'%3E" + anime.title + "%3C/text%3E%3C/svg%3E";
+                      e.currentTarget.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='600' viewBox='0 0 400 600'%3E%3Crect width='400' height='600' fill='%23374151'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='20' fill='white' text-anchor='middle' dy='.3em'%3EAnime ${num}%3C/text%3E%3C/svg%3E`;
                     }}
                   />
                 </div>
                 <CardContent className="p-4">
-                  <h3 className="text-lg font-bold text-white mb-2">{anime.title}</h3>
-                  <Badge className="bg-anime-gradient text-white text-xs">{anime.genre}</Badge>
+                  <h3 className="text-lg font-bold text-white mb-2">{t(`anime.title_${num}`) || `Anime ${num}`}</h3>
+                  <Badge className="bg-anime-gradient text-white text-xs">{t(`genre.${num}`) || 'Action'}</Badge>
                 </CardContent>
               </Card>
             ))}
@@ -294,58 +309,82 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Full Article Content - Fixed SEO and Language */}
+      {/* Complete German Article Content */}
       <section className="py-20 bg-white/5">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <article className="prose prose-lg prose-invert max-w-none">
               <header className="mb-12 text-center">
                 <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                  {t('article.title')}
+                  {language === 'de' ? 'Vollständiger Artikel über AniWorld' : 'Complete Article about AniWorld'}
                 </h2>
-                <p className="text-xl text-gray-300 leading-relaxed">
-                  {t('article.subtitle')}
-                </p>
               </header>
 
-              <div className="space-y-8">
-                <div className="bg-white/10 rounded-2xl p-8 border border-white/20">
-                  <p className="text-gray-200 text-lg leading-relaxed">
-                    {t('article.intro')}
-                  </p>
-                </div>
-
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  {t('article.problem')}
-                </p>
-
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  {t('article.official')}
-                </p>
-
-                <h3 className="text-3xl font-bold text-white mb-6">{t('article.special.title')}</h3>
-                
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  {t('article.special.content1')}
-                </p>
-
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  {t('article.special.content2')}
-                </p>
-
-                <h3 className="text-3xl font-bold text-white mb-6">{t('article.features.title')}</h3>
-
-                <h4 className="text-2xl font-bold text-white mb-4">{t('article.library.title')}</h4>
-                
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  {t('article.library.content')}
-                </p>
-
-                <h4 className="text-2xl font-bold text-white mb-4">{t('article.quality.title')}</h4>
-                
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  {t('article.quality.content')}
-                </p>
+              <div className="space-y-6 text-gray-300 text-lg leading-relaxed">
+                {content?.articleContent ? (
+                  content.articleContent.split('\n\n').map((paragraph: string, index: number) => {
+                    // Check if paragraph is a heading
+                    if (paragraph.includes('Was macht die AniWorld App besonders?') || 
+                        paragraph.includes('Wichtige Funktionen der AniWorld Android App') ||
+                        paragraph.includes('So lädst du die AniWorld APK auf Android herunter') ||
+                        paragraph.includes('Systemanforderungen für die AniWorld App') ||
+                        paragraph.includes('Häufige Probleme und schnelle Lösungen') ||
+                        paragraph.includes('Ist die AniWorld App sicher?') ||
+                        paragraph.includes('Erweiterte Funktionen für dein perfektes Anime-Erlebnis') ||
+                        paragraph.includes('Warum AniWorld besser ist als andere Anime-Apps') ||
+                        paragraph.includes('Häufig gestellte Fragen') ||
+                        paragraph.includes('Starte dein Anime-Abenteuer noch heute')) {
+                      return (
+                        <h3 key={index} className="text-2xl font-bold text-white mt-8 mb-4">
+                          {paragraph}
+                        </h3>
+                      );
+                    }
+                    
+                    // Check for sub-headings
+                    if (paragraph.includes('Umfassende Anime-Inhalte') ||
+                        paragraph.includes('Verschiedene Videoqualitäten') ||
+                        paragraph.includes('Profi-Videoplayer-Funktionen') ||
+                        paragraph.includes('Episoden herunterladen und offline ansehen') ||
+                        paragraph.includes('Sprachunterstützung für globales Publikum') ||
+                        paragraph.includes('Optimiert für alle Android-Geräte') ||
+                        paragraph.includes('Schritt 1: App-Installation erlauben') ||
+                        paragraph.includes('Schritt 2: Von offizieller Seite herunterladen') ||
+                        paragraph.includes('Schritt 3: App installieren') ||
+                        paragraph.includes('Schritt 4: Anime starten') ||
+                        paragraph.includes('Installationsfehler') ||
+                        paragraph.includes('App startet nicht') ||
+                        paragraph.includes('Langsames Laden') ||
+                        paragraph.includes('Anime nicht auffindbar') ||
+                        paragraph.includes('Intelligente Inhaltsempfehlungen') ||
+                        paragraph.includes('Nahtloses Streaming mit dem Pro-Player') ||
+                        paragraph.includes('Durchdachte Inhaltskategorien') ||
+                        paragraph.includes('Kostet die App etwas?') ||
+                        paragraph.includes('Wie oft wird neuer Content hinzugefügt?') ||
+                        paragraph.includes('Unterstützt die App Deutsch und Englisch?') ||
+                        paragraph.includes('Welche Videoauflösungen gibt es?') ||
+                        paragraph.includes('Kann ich den Player anpassen?')) {
+                      return (
+                        <h4 key={index} className="text-xl font-bold text-white mt-6 mb-3">
+                          {paragraph}
+                        </h4>
+                      );
+                    }
+                    
+                    return (
+                      <p key={index} className="mb-4">
+                        {paragraph}
+                      </p>
+                    );
+                  })
+                ) : (
+                  <div>
+                    <p>Die AniWorld App ist die ultimative kostenlose Anime-Streaming-Lösung für Android-Nutzer...</p>
+                    <p className="text-sm text-gray-400 mt-4">
+                      (Full article content will be loaded from admin panel)
+                    </p>
+                  </div>
+                )}
               </div>
             </article>
           </div>

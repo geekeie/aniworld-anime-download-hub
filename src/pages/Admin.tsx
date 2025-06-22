@@ -1,27 +1,34 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Upload, Save, Eye, Settings } from "lucide-react";
+import { Upload, Save, Eye, Settings, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import AdminLogin from "@/components/AdminLogin";
 
 const Admin = () => {
   const { toast } = useToast();
+  const { isAuthenticated, logout } = useAuth();
   const [activeTab, setActiveTab] = useState("content");
 
   // Content state
   const [content, setContent] = useState({
     heroTitle: "AniWorld App: Kostenlose APK für Android herunterladen & Animes schauen",
     heroDescription: "Schaue tausende von Anime-Episoden ohne Abonnementgebühren.",
-    articleContent: "",
-    metaDescription: "Download AniWorld APK kostenlos für Android..."
+    articleContent: `Die AniWorld App ist die ultimative kostenlose Anime-Streaming-Lösung für Android-Nutzer. Wenn du Schwierigkeiten hast, einen zuverlässigen Ort zum Ansehen deiner Lieblings-Anime-Serien zu finden, löst diese App das Problem sofort.
+
+Hast du genug von monatlichen Abogebühren für Anime-Streaming? Genug von Apps, die abstürzen oder nur begrenzte Inhalte bieten? Die AniWorld-App gibt dir Zugang zu tausenden Anime-Episoden – ganz ohne einen Cent auszugeben.
+
+Wir sind das offizielle Team hinter aniworld.de. Wir haben diese Anime-App speziell für Fans entwickelt, die qualitativ hochwertiges Streaming auf ihrem Handy genießen wollen. Keine versteckten Kosten. Keine nervige Werbung. Einfach pures Anime-Vergnügen.`,
+    metaDescription: "AniWorld APK kostenlos herunterladen für Android. Schaue tausende Anime-Episoden mit Attack on Titan, Your Name, One Piece ohne Abonnementgebühren. Offizielle App von aniworld.de mit HD-Qualität und Offline-Downloads."
   });
 
-  // Images state
+  // Images state with proper URLs that will be saved to localStorage
   const [images, setImages] = useState({
     logo: "/logo-placeholder.png",
     heroLogo: "/hero-logo-placeholder.png",
@@ -31,8 +38,21 @@ const Admin = () => {
     anime4: "/placeholder-anime-4.jpg"
   });
 
+  // Load saved content and images on component mount
+  useEffect(() => {
+    const savedContent = localStorage.getItem('aniworld-content');
+    const savedImages = localStorage.getItem('aniworld-images');
+    
+    if (savedContent) {
+      setContent(JSON.parse(savedContent));
+    }
+    
+    if (savedImages) {
+      setImages(JSON.parse(savedImages));
+    }
+  }, []);
+
   const handleSaveContent = () => {
-    // In a real app, this would save to a backend
     localStorage.setItem('aniworld-content', JSON.stringify(content));
     toast({
       title: "Content Saved",
@@ -45,10 +65,12 @@ const Admin = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setImages(prev => ({
-          ...prev,
+        const newImages = {
+          ...images,
           [imageKey]: e.target?.result as string
-        }));
+        };
+        setImages(newImages);
+        localStorage.setItem('aniworld-images', JSON.stringify(newImages));
         toast({
           title: "Image Uploaded",
           description: `${imageKey} has been updated successfully.`,
@@ -58,12 +80,30 @@ const Admin = () => {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    toast({
+      title: "Logged Out",
+      description: "You have been logged out of the admin panel.",
+    });
+  };
+
+  if (!isAuthenticated) {
+    return <AdminLogin />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
       <div className="container mx-auto max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">AniWorld Admin Panel</h1>
-          <p className="text-gray-300">Manage your website content, images, and settings</p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold text-white mb-2">AniWorld Admin Panel</h1>
+            <p className="text-gray-300">Manage your website content, images, and settings</p>
+          </div>
+          <Button onClick={handleLogout} variant="outline" className="border-white/30 text-white hover:bg-white/10">
+            <LogOut className="w-4 h-4 mr-2" />
+            Logout
+          </Button>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -105,14 +145,14 @@ const Admin = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="articleContent" className="text-white">Article Content</Label>
+                  <Label htmlFor="articleContent" className="text-white">Article Content (German)</Label>
                   <Textarea
                     id="articleContent"
                     value={content.articleContent}
                     onChange={(e) => setContent(prev => ({ ...prev, articleContent: e.target.value }))}
                     className="bg-white/20 border-white/30 text-white"
-                    rows={10}
-                    placeholder="Enter your article content in German..."
+                    rows={15}
+                    placeholder="Enter your complete German article content..."
                   />
                 </div>
 
@@ -142,6 +182,9 @@ const Admin = () => {
                         src={images.logo} 
                         alt="Logo Preview" 
                         className="w-16 h-16 mx-auto mb-2 object-contain"
+                        onError={(e) => {
+                          e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23374151'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='10' fill='white' text-anchor='middle' dy='.3em'%3ELogo%3C/text%3E%3C/svg%3E";
+                        }}
                       />
                       <Input
                         type="file"
@@ -160,6 +203,9 @@ const Admin = () => {
                         src={images.heroLogo} 
                         alt="Hero Logo Preview" 
                         className="w-32 h-32 mx-auto mb-2 object-contain"
+                        onError={(e) => {
+                          e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' fill='%23374151'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='12' fill='white' text-anchor='middle' dy='.3em'%3EHero Logo%3C/text%3E%3C/svg%3E";
+                        }}
                       />
                       <Input
                         type="file"
@@ -179,6 +225,9 @@ const Admin = () => {
                           src={images[`anime${num}` as keyof typeof images]} 
                           alt={`Anime ${num} Preview`} 
                           className="w-24 h-32 mx-auto mb-2 object-cover rounded"
+                          onError={(e) => {
+                            e.currentTarget.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='128' viewBox='0 0 96 128'%3E%3Crect width='96' height='128' fill='%23374151'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='10' fill='white' text-anchor='middle' dy='.3em'%3EAnime ${num}%3C/text%3E%3C/svg%3E`;
+                          }}
                         />
                         <Input
                           type="file"
