@@ -6,10 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Upload, Save, Eye, Settings, LogOut } from "lucide-react";
+import { Upload, Save, Eye, Settings, LogOut, Edit, FileText, Download, DollarSign } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import AdminLogin from "@/components/AdminLogin";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const Admin = () => {
   const { toast } = useToast();
@@ -20,15 +22,23 @@ const Admin = () => {
   const [content, setContent] = useState({
     heroTitle: "AniWorld App: Kostenlose APK für Android herunterladen & Animes schauen",
     heroDescription: "Schaue tausende von Anime-Episoden ohne Abonnementgebühren.",
-    articleContent: `Die AniWorld App ist die ultimative kostenlose Anime-Streaming-Lösung für Android-Nutzer. Wenn du Schwierigkeiten hast, einen zuverlässigen Ort zum Ansehen deiner Lieblings-Anime-Serien zu finden, löst diese App das Problem sofort.
-
-Hast du genug von monatlichen Abogebühren für Anime-Streaming? Genug von Apps, die abstürzen oder nur begrenzte Inhalte bieten? Die AniWorld-App gibt dir Zugang zu tausenden Anime-Episoden – ganz ohne einen Cent auszugeben.
-
-Wir sind das offizielle Team hinter aniworld.de. Wir haben diese Anime-App speziell für Fans entwickelt, die qualitativ hochwertiges Streaming auf ihrem Handy genießen wollen. Keine versteckten Kosten. Keine nervige Werbung. Einfach pures Anime-Vergnügen.`,
-    metaDescription: "AniWorld APK kostenlos herunterladen für Android. Schaue tausende Anime-Episoden mit Attack on Titan, Your Name, One Piece ohne Abonnementgebühren. Offizielle App von aniworld.de mit HD-Qualität und Offline-Downloads."
+    articleContent: `Die AniWorld App ist die ultimative kostenlose Anime-Streaming-Lösung für Android-Nutzer...`,
+    metaDescription: "AniWorld APK kostenlos herunterladen für Android. Schaue tausende Anime-Episoden mit Attack on Titan, Your Name, One Piece ohne Abonnementgebühren. Offizielle App von aniworld.de mit HD-Qualität und Offline-Downloads.",
+    downloadButtonText: "AniWorld APK herunterladen",
+    downloadUrl: "https://download.aniworldapp.de"
   });
 
-  // Images state with proper URLs that will be saved to localStorage
+  // Ad placement state
+  const [adSettings, setAdSettings] = useState({
+    beforeDownloadAd: "",
+    afterDownloadAd: "",
+    sidebarAd: "",
+    headerAd: "",
+    footerAd: "",
+    articleAd: ""
+  });
+
+  // Images state
   const [images, setImages] = useState({
     logo: "/logo-placeholder.png",
     heroLogo: "/hero-logo-placeholder.png",
@@ -38,10 +48,27 @@ Wir sind das offizielle Team hinter aniworld.de. Wir haben diese Anime-App spezi
     anime4: "/placeholder-anime-4.jpg"
   });
 
-  // Load saved content and images on component mount
+  // Rich text editor modules
+  const quillModules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      [{ 'script': 'sub'}, { 'script': 'super' }],
+      [{ 'indent': '-1'}, { 'indent': '+1' }],
+      ['blockquote', 'code-block'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'align': [] }],
+      ['link', 'image'],
+      ['clean']
+    ],
+  };
+
+  // Load saved content, images, and ads on component mount
   useEffect(() => {
     const savedContent = localStorage.getItem('aniworld-content');
     const savedImages = localStorage.getItem('aniworld-images');
+    const savedAds = localStorage.getItem('aniworld-ads');
     
     if (savedContent) {
       setContent(JSON.parse(savedContent));
@@ -50,6 +77,10 @@ Wir sind das offizielle Team hinter aniworld.de. Wir haben diese Anime-App spezi
     if (savedImages) {
       setImages(JSON.parse(savedImages));
     }
+
+    if (savedAds) {
+      setAdSettings(JSON.parse(savedAds));
+    }
   }, []);
 
   const handleSaveContent = () => {
@@ -57,6 +88,14 @@ Wir sind das offizielle Team hinter aniworld.de. Wir haben diese Anime-App spezi
     toast({
       title: "Content Saved",
       description: "Your content changes have been saved successfully.",
+    });
+  };
+
+  const handleSaveAds = () => {
+    localStorage.setItem('aniworld-ads', JSON.stringify(adSettings));
+    toast({
+      title: "Ad Settings Saved",
+      description: "Your advertisement placements have been saved successfully.",
     });
   };
 
@@ -98,7 +137,7 @@ Wir sind das offizielle Team hinter aniworld.de. Wir haben diese Anime-App spezi
         <div className="mb-8 flex justify-between items-center">
           <div>
             <h1 className="text-4xl font-bold text-white mb-2">AniWorld Admin Panel</h1>
-            <p className="text-gray-300">Manage your website content, images, and settings</p>
+            <p className="text-gray-300">Manage your website content, images, downloads, and advertisements</p>
           </div>
           <Button onClick={handleLogout} variant="outline" className="border-white/30 text-white hover:bg-white/10">
             <LogOut className="w-4 h-4 mr-2" />
@@ -107,18 +146,19 @@ Wir sind das offizielle Team hinter aniworld.de. Wir haben diese Anime-App spezi
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-5 mb-8">
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="images">Images</TabsTrigger>
+            <TabsTrigger value="download">Download</TabsTrigger>
+            <TabsTrigger value="ads">Ads</TabsTrigger>
             <TabsTrigger value="seo">SEO</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
           <TabsContent value="content">
             <Card className="bg-white/10 border-white/20 backdrop-blur-md">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
-                  <Settings className="w-5 h-5" />
+                  <Edit className="w-5 h-5" />
                   Content Management
                 </CardTitle>
               </CardHeader>
@@ -145,20 +185,157 @@ Wir sind das offizielle Team hinter aniworld.de. Wir haben diese Anime-App spezi
                 </div>
 
                 <div>
-                  <Label htmlFor="articleContent" className="text-white">Article Content (German)</Label>
-                  <Textarea
-                    id="articleContent"
-                    value={content.articleContent}
-                    onChange={(e) => setContent(prev => ({ ...prev, articleContent: e.target.value }))}
-                    className="bg-white/20 border-white/30 text-white"
-                    rows={15}
-                    placeholder="Enter your complete German article content..."
-                  />
+                  <Label className="text-white mb-4 block">Article Content (German) - Rich Text Editor</Label>
+                  <div className="bg-white rounded-lg">
+                    <ReactQuill
+                      theme="snow"
+                      value={content.articleContent}
+                      onChange={(value) => setContent(prev => ({ ...prev, articleContent: value }))}
+                      modules={quillModules}
+                      style={{ height: '400px', marginBottom: '50px' }}
+                    />
+                  </div>
                 </div>
 
                 <Button onClick={handleSaveContent} className="bg-green-600 hover:bg-green-700">
                   <Save className="w-4 h-4 mr-2" />
                   Save Content
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="download">
+            <Card className="bg-white/10 border-white/20 backdrop-blur-md">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Download className="w-5 h-5" />
+                  Download Button Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <Label htmlFor="downloadUrl" className="text-white">Download URL</Label>
+                  <Input
+                    id="downloadUrl"
+                    value={content.downloadUrl}
+                    onChange={(e) => setContent(prev => ({ ...prev, downloadUrl: e.target.value }))}
+                    className="bg-white/20 border-white/30 text-white"
+                    placeholder="https://download.aniworldapp.de"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="downloadButtonText" className="text-white">Download Button Text</Label>
+                  <Input
+                    id="downloadButtonText"
+                    value={content.downloadButtonText}
+                    onChange={(e) => setContent(prev => ({ ...prev, downloadButtonText: e.target.value }))}
+                    className="bg-white/20 border-white/30 text-white"
+                    placeholder="AniWorld APK herunterladen"
+                  />
+                </div>
+
+                <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4">
+                  <h3 className="text-blue-400 font-semibold mb-2">Download Button Preview</h3>
+                  <Button className="bg-anime-gradient hover:opacity-90 text-white px-8 py-3 text-lg">
+                    <Download className="w-5 h-5 mr-2" />
+                    {content.downloadButtonText}
+                  </Button>
+                </div>
+
+                <Button onClick={handleSaveContent} className="bg-green-600 hover:bg-green-700">
+                  <Save className="w-4 h-4 mr-2" />
+                  Save Download Settings
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="ads">
+            <Card className="bg-white/10 border-white/20 backdrop-blur-md">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <DollarSign className="w-5 h-5" />
+                  Advertisement Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <Label htmlFor="beforeDownloadAd" className="text-white">Ad Before Download Button</Label>
+                  <Textarea
+                    id="beforeDownloadAd"
+                    value={adSettings.beforeDownloadAd}
+                    onChange={(e) => setAdSettings(prev => ({ ...prev, beforeDownloadAd: e.target.value }))}
+                    className="bg-white/20 border-white/30 text-white"
+                    rows={4}
+                    placeholder="Enter HTML/JavaScript ad code for placement before download button..."
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="afterDownloadAd" className="text-white">Ad After Download Button</Label>
+                  <Textarea
+                    id="afterDownloadAd"
+                    value={adSettings.afterDownloadAd}
+                    onChange={(e) => setAdSettings(prev => ({ ...prev, afterDownloadAd: e.target.value }))}
+                    className="bg-white/20 border-white/30 text-white"
+                    rows={4}
+                    placeholder="Enter HTML/JavaScript ad code for placement after download button..."
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="sidebarAd" className="text-white">Sidebar Advertisement</Label>
+                  <Textarea
+                    id="sidebarAd"
+                    value={adSettings.sidebarAd}
+                    onChange={(e) => setAdSettings(prev => ({ ...prev, sidebarAd: e.target.value }))}
+                    className="bg-white/20 border-white/30 text-white"
+                    rows={4}
+                    placeholder="Enter HTML/JavaScript ad code for sidebar placement..."
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="headerAd" className="text-white">Header Advertisement</Label>
+                  <Textarea
+                    id="headerAd"
+                    value={adSettings.headerAd}
+                    onChange={(e) => setAdSettings(prev => ({ ...prev, headerAd: e.target.value }))}
+                    className="bg-white/20 border-white/30 text-white"
+                    rows={3}
+                    placeholder="Enter HTML/JavaScript ad code for header placement..."
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="articleAd" className="text-white">In-Article Advertisement</Label>
+                  <Textarea
+                    id="articleAd"
+                    value={adSettings.articleAd}
+                    onChange={(e) => setAdSettings(prev => ({ ...prev, articleAd: e.target.value }))}
+                    className="bg-white/20 border-white/30 text-white"
+                    rows={4}
+                    placeholder="Enter HTML/JavaScript ad code for placement within article content..."
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="footerAd" className="text-white">Footer Advertisement</Label>
+                  <Textarea
+                    id="footerAd"
+                    value={adSettings.footerAd}
+                    onChange={(e) => setAdSettings(prev => ({ ...prev, footerAd: e.target.value }))}
+                    className="bg-white/20 border-white/30 text-white"
+                    rows={3}
+                    placeholder="Enter HTML/JavaScript ad code for footer placement..."
+                  />
+                </div>
+
+                <Button onClick={handleSaveAds} className="bg-green-600 hover:bg-green-700">
+                  <Save className="w-4 h-4 mr-2" />
+                  Save Ad Settings
                 </Button>
               </CardContent>
             </Card>
@@ -246,7 +423,10 @@ Wir sind das offizielle Team hinter aniworld.de. Wir haben diese Anime-App spezi
           <TabsContent value="seo">
             <Card className="bg-white/10 border-white/20 backdrop-blur-md">
               <CardHeader>
-                <CardTitle className="text-white">SEO Settings</CardTitle>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <FileText className="w-5 h-5" />
+                  SEO Settings
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>
@@ -272,6 +452,7 @@ Wir sind das offizielle Team hinter aniworld.de. Wir haben diese Anime-App spezi
                     <li>✅ Schema markup implemented</li>
                     <li>✅ FAQ schema added</li>
                     <li>✅ Proper hreflang attributes</li>
+                    <li>✅ Admin panel hidden from indexing</li>
                   </ul>
                 </div>
 
@@ -279,42 +460,6 @@ Wir sind das offizielle Team hinter aniworld.de. Wir haben diese Anime-App spezi
                   <Save className="w-4 h-4 mr-2" />
                   Save SEO Settings
                 </Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="settings">
-            <Card className="bg-white/10 border-white/20 backdrop-blur-md">
-              <CardHeader>
-                <CardTitle className="text-white">General Settings</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4">
-                  <h3 className="text-blue-400 font-semibold mb-2">Download Link Settings</h3>
-                  <p className="text-blue-300 text-sm">
-                    Current download URL: https://download.aniworldapp.de
-                  </p>
-                </div>
-
-                <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4">
-                  <h3 className="text-yellow-400 font-semibold mb-2">Language Settings</h3>
-                  <ul className="text-yellow-300 text-sm space-y-1">
-                    <li>✅ German is primary language</li>
-                    <li>✅ English translation available</li>
-                    <li>✅ URL structure: / (German), /en (English)</li>
-                    <li>✅ Hreflang attributes configured</li>
-                  </ul>
-                </div>
-
-                <div className="flex gap-4">
-                  <Button className="bg-purple-600 hover:bg-purple-700">
-                    <Eye className="w-4 h-4 mr-2" />
-                    Preview Changes
-                  </Button>
-                  <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
-                    Reset to Defaults
-                  </Button>
-                </div>
               </CardContent>
             </Card>
           </TabsContent>
