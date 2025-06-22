@@ -1,3 +1,4 @@
+
 import { Download, Play, Shield, Smartphone, Globe, Star, Zap, Heart, Mail, Image, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,7 +10,7 @@ import { LanguageToggle } from "@/components/LanguageToggle";
 
 const Index = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const features = [
     {
@@ -54,47 +55,82 @@ const Index = () => {
   const animeImages = [
     {
       title: t('anime.attack_on_titan'),
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop",
+      image: "/placeholder-anime-1.jpg", // Placeholder for admin upload
       genre: t('genre.action')
     },
     {
       title: t('anime.your_name'),
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop",
+      image: "/placeholder-anime-2.jpg", // Placeholder for admin upload
       genre: t('genre.romance')
     },
     {
       title: t('anime.death_note'),
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop",
+      image: "/placeholder-anime-3.jpg", // Placeholder for admin upload
       genre: t('genre.thriller')
     },
     {
       title: t('anime.one_piece'),
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop",
+      image: "/placeholder-anime-4.jpg", // Placeholder for admin upload
       genre: t('genre.adventure')
     }
   ];
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": t('faq.cost.question'),
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": t('faq.cost.answer')
+        }
+      },
+      {
+        "@type": "Question",
+        "name": t('faq.safe.question'),
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": t('faq.safe.answer')
+        }
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      {/* Schema Markup */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      
       {/* Header */}
       <header className="relative z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="w-10 h-10 bg-anime-gradient rounded-xl flex items-center justify-center">
-              <Play className="w-6 h-6 text-white" />
+              <img 
+                src="/logo-placeholder.png" 
+                alt="AniWorld Logo" 
+                className="w-8 h-8 object-contain"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+              <Play className="w-6 h-6 text-white hidden" />
             </div>
             <span className="text-2xl font-bold text-white">AniWorld</span>
           </div>
           
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation - Removed Download Button */}
           <nav className="hidden md:flex items-center space-x-6">
             <Link to="/" className="text-white hover:text-purple-300 transition-colors">{t('nav.home')}</Link>
             <Link to="/privacy" className="text-white hover:text-purple-300 transition-colors">{t('nav.privacy')}</Link>
+            <Link to="/admin" className="text-white hover:text-purple-300 transition-colors">{t('nav.admin')}</Link>
             <LanguageToggle />
-            <Button className="bg-anime-gradient hover:opacity-90 text-white font-semibold px-6 py-2 rounded-full transition-all duration-300 hover:scale-105">
-              <Download className="w-4 h-4 mr-2" />
-              {t('button.download')}
-            </Button>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -124,11 +160,14 @@ const Index = () => {
               >
                 {t('nav.privacy')}
               </Link>
+              <Link 
+                to="/admin" 
+                className="text-white hover:text-purple-300 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {t('nav.admin')}
+              </Link>
               <LanguageToggle />
-              <Button className="bg-anime-gradient hover:opacity-90 text-white font-semibold px-6 py-2 rounded-full transition-all duration-300 hover:scale-105 w-full">
-                <Download className="w-4 h-4 mr-2" />
-                {t('button.download')}
-              </Button>
             </nav>
           </div>
         )}
@@ -148,6 +187,18 @@ const Index = () => {
             {t('hero.description')}
           </p>
           
+          {/* Hero Section Logo */}
+          <div className="mb-8">
+            <img 
+              src="/hero-logo-placeholder.png" 
+              alt="AniWorld App Preview" 
+              className="mx-auto w-64 h-64 object-contain"
+              onError={(e) => {
+                e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 256 256'%3E%3Crect width='256' height='256' fill='%23374151'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='16' fill='white' text-anchor='middle' dy='.3em'%3EApp Preview%3C/text%3E%3C/svg%3E";
+              }}
+            />
+          </div>
+          
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
             {stats.map((stat, index) => (
@@ -160,7 +211,11 @@ const Index = () => {
 
           {/* Enhanced CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <Button size="lg" className="bg-anime-gradient hover:opacity-90 text-white font-bold px-8 py-4 rounded-full text-lg transition-all duration-300 hover:scale-105 shadow-2xl">
+            <Button 
+              size="lg" 
+              className="bg-anime-gradient hover:opacity-90 text-white font-bold px-8 py-4 rounded-full text-lg transition-all duration-300 hover:scale-105 shadow-2xl"
+              onClick={() => window.open('https://download.aniworldapp.de', '_blank')}
+            >
               <Download className="w-6 h-6 mr-3" />
               {t('hero.download.button')}
             </Button>
@@ -191,11 +246,14 @@ const Index = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {animeImages.map((anime, index) => (
               <Card key={index} className="bg-white/5 border-white/10 backdrop-blur-md hover:bg-white/10 transition-all duration-300 hover:scale-105 animate-fade-in overflow-hidden" style={{animationDelay: `${index * 0.1}s`}}>
-                <div className="aspect-[3/4] overflow-hidden">
+                <div className="aspect-[3/4] overflow-hidden bg-gray-700 flex items-center justify-center">
                   <img 
                     src={anime.image} 
                     alt={anime.title}
                     className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                    onError={(e) => {
+                      e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='600' viewBox='0 0 400 600'%3E%3Crect width='400' height='600' fill='%23374151'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='20' fill='white' text-anchor='middle' dy='.3em'%3E" + anime.title + "%3C/text%3E%3C/svg%3E";
+                    }}
                   />
                 </div>
                 <CardContent className="p-4">
@@ -236,15 +294,15 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Full Article Content */}
+      {/* Full Article Content - Fixed SEO and Language */}
       <section className="py-20 bg-white/5">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <article className="prose prose-lg prose-invert max-w-none">
               <header className="mb-12 text-center">
-                <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
                   {t('article.title')}
-                </h1>
+                </h2>
                 <p className="text-xl text-gray-300 leading-relaxed">
                   {t('article.subtitle')}
                 </p>
@@ -265,80 +323,28 @@ const Index = () => {
                   {t('article.official')}
                 </p>
 
-                <h2 className="text-3xl font-bold text-white mb-6">What Makes AniWorld App Special</h2>
+                <h3 className="text-3xl font-bold text-white mb-6">{t('article.special.title')}</h3>
                 
                 <p className="text-gray-300 text-lg leading-relaxed">
-                  The AniWorld anime app stands out from other streaming apps in several ways. First, it's completely free to use. You don't need to create an account or provide credit card details.
+                  {t('article.special.content1')}
                 </p>
 
                 <p className="text-gray-300 text-lg leading-relaxed">
-                  Second, our anime streaming app contains every type of anime content you can imagine. Action-packed series like Attack on Titan, romantic comedies like Kaguya-sama, horror anime like Tokyo Ghoul, and slice-of-life shows like Your Name. From classic series to brand new seasonal releases, everything is available in one place.
+                  {t('article.special.content2')}
                 </p>
 
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  Third, the app includes content for all age groups. Kids can enjoy Pokemon and Doraemon. Teenagers love Naruto and One Piece. Adults can watch mature content like Death Note and Cowboy Bebop.
-                </p>
+                <h3 className="text-3xl font-bold text-white mb-6">{t('article.features.title')}</h3>
 
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  The interface is clean and simple. Our official website aniworld.de was designed specifically for German users, but the app serves both English and German speaking audiences. Finding your next anime to watch takes just a few taps.
-                </p>
-
-                <h2 className="text-3xl font-bold text-white mb-6">Key Features of AniWorld Android App</h2>
-
-                <h3 className="text-2xl font-bold text-white mb-4">Comprehensive Anime Content Library</h3>
+                <h4 className="text-2xl font-bold text-white mb-4">{t('article.library.title')}</h4>
                 
                 <p className="text-gray-300 text-lg leading-relaxed">
-                  Our free anime app hosts every type of anime series you can think of. Popular shounen anime like Dragon Ball Z, One Piece, and Bleach. Romantic anime series including Your Name, A Silent Voice, and Toradora. Horror and thriller anime like Another and Parasyte. Comedy series such as Gintama and KonoSuba.
+                  {t('article.library.content')}
                 </p>
 
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  We also feature different anime formats. Full TV series with 12-24 episodes per season. Long-running shows with hundreds of episodes. Anime movies from Studio Ghibli and other famous studios. OVAs and special episodes that are hard to find elsewhere.
-                </p>
-
-                <h3 className="text-2xl font-bold text-white mb-4">Multiple Video Quality Options</h3>
+                <h4 className="text-2xl font-bold text-white mb-4">{t('article.quality.title')}</h4>
                 
                 <p className="text-gray-300 text-lg leading-relaxed">
-                  Watch anime in the quality that suits your device and internet speed. Our app offers 360p for basic viewing on slower connections. 720p HD for crisp, clear picture quality. 1080p Full HD for the ultimate viewing experience on larger screens.
-                </p>
-
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  The app automatically detects your internet speed and suggests the best quality. You can also manually select your preferred resolution for each episode.
-                </p>
-
-                <h3 className="text-2xl font-bold text-white mb-4">Advanced Pro Player Features</h3>
-                
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  The built-in video player comes with professional-grade features. Skip opening and ending themes with one tap. Adjust playback speed from 0.5x to 2x for your preference. Enable subtitle timing adjustment if sync issues occur.
-                </p>
-
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  The player supports gesture controls. Swipe left or right to skip 10 seconds. Swipe up or down to adjust volume and brightness. Double-tap to pause or play. These features make watching anime more comfortable and convenient.
-                </p>
-
-                <h3 className="text-2xl font-bold text-white mb-4">Download Episodes for Offline Viewing</h3>
-                
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  Going somewhere without internet? Download up to 50 episodes directly to your phone. Perfect for flights, trips, or areas with poor network coverage.
-                </p>
-
-                <h3 className="text-2xl font-bold text-white mb-4">Language Support for Global Audience</h3>
-                
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  The anime app supports both English and German content primarily. Since our official website aniworld.de serves the German market, we understand what German anime fans want. However, the app interface works perfectly in English too.
-                </p>
-
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  Subtitles are available in multiple languages including English, German, Spanish, French, Italian, and Portuguese. You can choose between original Japanese audio with subtitles or dubbed versions in English and German where available.
-                </p>
-
-                <h3 className="text-2xl font-bold text-white mb-4">Optimized for All Android Devices</h3>
-                
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  Whether you have a Samsung Galaxy, Xiaomi Redmi, OnePlus, Google Pixel, or any other Android phone, the app runs smoothly. It's specially optimized for devices with 2GB RAM or more, but works fine on older phones too.
-                </p>
-
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  The app adapts to your screen size automatically. Small phone screens get a compact layout. Tablet users enjoy a wider interface with more content visible at once.
+                  {t('article.quality.content')}
                 </p>
               </div>
             </article>
@@ -380,7 +386,11 @@ const Index = () => {
               </div>
             </div>
 
-            <Button size="lg" className="bg-anime-gradient hover:opacity-90 text-white font-bold px-12 py-6 rounded-full text-xl transition-all duration-300 hover:scale-105 shadow-2xl">
+            <Button 
+              size="lg" 
+              className="bg-anime-gradient hover:opacity-90 text-white font-bold px-12 py-6 rounded-full text-xl transition-all duration-300 hover:scale-105 shadow-2xl"
+              onClick={() => window.open('https://download.aniworldapp.de', '_blank')}
+            >
               <Download className="w-8 h-8 mr-4" />
               {t('download.button.main')}
             </Button>
@@ -472,7 +482,11 @@ const Index = () => {
             {t('cta.subtitle')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" className="bg-white text-purple-600 hover:bg-gray-100 font-bold px-12 py-6 rounded-full text-xl transition-all duration-300 hover:scale-105 shadow-2xl">
+            <Button 
+              size="lg" 
+              className="bg-white text-purple-600 hover:bg-gray-100 font-bold px-12 py-6 rounded-full text-xl transition-all duration-300 hover:scale-105 shadow-2xl"
+              onClick={() => window.open('https://download.aniworldapp.de', '_blank')}
+            >
               <Download className="w-8 h-8 mr-4" />
               {t('cta.download')}
             </Button>

@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 type Language = 'de' | 'en';
 
@@ -16,6 +16,7 @@ const translations = {
     // Header
     'nav.home': 'Startseite',
     'nav.privacy': 'Datenschutz',
+    'nav.admin': 'Admin',
     'button.download': 'APK herunterladen',
     
     // Hero Section
@@ -59,11 +60,19 @@ const translations = {
     'features.player.desc': 'Erweiterter Video-Player mit Gestensteuerung und Qualitätsoptionen',
     
     // Article Content
-    'article.title': 'AniWorld App: Kostenlose APK für Android herunterladen & Animes schauen',
+    'article.title': 'Warum AniWorld App wählen?',
     'article.subtitle': 'Die ultimative kostenlose Anime-Streaming-Lösung für Android-Nutzer',
     'article.intro': 'AniWorld App ist die ultimative kostenlose Anime-Streaming-Lösung für Android-Nutzer. Wenn du Schwierigkeiten hast, einen zuverlässigen Ort zu finden, um deine Lieblings-Anime-Shows zu schauen, löst diese App dieses Problem sofort.',
     'article.problem': 'Müde davon, monatliche Gebühren für Anime-Streaming zu zahlen? Genervt von Apps, die abstürzen oder begrenzten Inhalt haben? Die AniWorld-Anwendung gibt dir Zugang zu tausenden von Anime-Episoden, ohne einen einzigen Cent auszugeben.',
     'article.official': 'Wir sind das offizielle Team hinter aniworld.de. Wir haben diese Anime-App speziell für Fans erstellt, die Qualitäts-Streaming auf ihren Handys wollen. Keine versteckten Kosten. Keine nervigen Werbungen. Nur pure Anime-Unterhaltung.',
+    'article.special.title': 'Was macht AniWorld App besonders',
+    'article.special.content1': 'Die AniWorld Anime-App hebt sich von anderen Streaming-Apps in mehreren Bereichen ab. Erstens ist sie völlig kostenlos zu verwenden. Du musst kein Konto erstellen oder Kreditkartendaten angeben.',
+    'article.special.content2': 'Zweitens enthält unsere Anime-Streaming-App jeden Typ von Anime-Inhalt, den du dir vorstellen kannst. Action-geladene Serien wie Attack on Titan, romantische Komödien wie Kaguya-sama, Horror-Anime wie Tokyo Ghoul und Slice-of-Life-Shows wie Your Name.',
+    'article.features.title': 'Hauptfunktionen der AniWorld Android App',
+    'article.library.title': 'Umfassende Anime-Inhaltsbibliothek',
+    'article.library.content': 'Unsere kostenlose Anime-App hostet jeden Typ von Anime-Serie, den du dir vorstellen kannst. Beliebte Shounen-Anime wie Dragon Ball Z, One Piece und Bleach. Romantische Anime-Serien einschließlich Your Name, A Silent Voice und Toradora.',
+    'article.quality.title': 'Mehrere Videoqualitätsoptionen',
+    'article.quality.content': 'Schaue Anime in der Qualität, die zu deinem Gerät und deiner Internetgeschwindigkeit passt. Unsere App bietet 360p für grundlegendes Ansehen bei langsameren Verbindungen. 720p HD für klare, scharfe Bildqualität. 1080p Full HD für das ultimative Seherlebnis.',
     
     // Download Instructions
     'download.title': 'Wie man AniWorld APK herunterlädt',
@@ -110,6 +119,7 @@ const translations = {
     // Header
     'nav.home': 'Home',
     'nav.privacy': 'Privacy',
+    'nav.admin': 'Admin',
     'button.download': 'Download APK',
     
     // Hero Section
@@ -153,11 +163,19 @@ const translations = {
     'features.player.desc': 'Advanced video player with gesture controls and quality options',
     
     // Article Content
-    'article.title': 'AniWorld App: Download Free APK for Android & Watch Animes',
+    'article.title': 'Why Choose AniWorld App?',
     'article.subtitle': 'The ultimate free anime streaming solution for Android users',
     'article.intro': 'AniWorld App is the ultimate free anime streaming solution for Android users. If you\'re struggling to find a reliable place to watch your favorite anime shows, this app solves that problem instantly.',
     'article.problem': 'Tired of paying monthly fees for anime streaming? Fed up with apps that crash or have limited content? The AniWorld application gives you access to thousands of anime episodes without spending a single penny.',
     'article.official': 'We are the official team behind aniworld.de. We created this anime app specifically for fans who want quality streaming on their phones. No hidden costs. No annoying ads. Just pure anime entertainment.',
+    'article.special.title': 'What Makes AniWorld App Special',
+    'article.special.content1': 'The AniWorld anime app stands out from other streaming apps in several ways. First, it\'s completely free to use. You don\'t need to create an account or provide credit card details.',
+    'article.special.content2': 'Second, our anime streaming app contains every type of anime content you can imagine. Action-packed series like Attack on Titan, romantic comedies like Kaguya-sama, horror anime like Tokyo Ghoul, and slice-of-life shows like Your Name.',
+    'article.features.title': 'Key Features of AniWorld Android App',
+    'article.library.title': 'Comprehensive Anime Content Library',
+    'article.library.content': 'Our free anime app hosts every type of anime series you can think of. Popular shounen anime like Dragon Ball Z, One Piece, and Bleach. Romantic anime series including Your Name, A Silent Voice, and Toradora.',
+    'article.quality.title': 'Multiple Video Quality Options',
+    'article.quality.content': 'Watch anime in the quality that suits your device and internet speed. Our app offers 360p for basic viewing on slower connections. 720p HD for crisp, clear picture quality. 1080p Full HD for the ultimate viewing experience.',
     
     // Download Instructions
     'download.title': 'How to Download AniWorld APK',
@@ -204,6 +222,19 @@ const translations = {
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<Language>('de'); // German as primary
+
+  useEffect(() => {
+    // Update document lang attribute and URL path
+    document.documentElement.lang = language;
+    
+    // Update URL path for SEO
+    const currentPath = window.location.pathname;
+    if (language === 'en' && !currentPath.startsWith('/en')) {
+      window.history.pushState({}, '', '/en' + currentPath);
+    } else if (language === 'de' && currentPath.startsWith('/en')) {
+      window.history.pushState({}, '', currentPath.replace('/en', ''));
+    }
+  }, [language]);
 
   const t = (key: string): string => {
     return translations[language][key as keyof typeof translations['de']] || key;
