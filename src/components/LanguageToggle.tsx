@@ -22,3 +22,5 @@ export const LanguageToggle = () => {
     </Button>
   );
 };
+
+export default LanguageToggle;
