@@ -3,7 +3,7 @@ import { Download, Play, Star, Users, Globe, Shield, Smartphone, Zap } from "luc
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import LanguageToggle from "@/components/LanguageToggle";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 const Index = () => {
   const { language, t } = useLanguage();
